@@ -33,8 +33,8 @@ const renderTodos = (todos) => {
   let listString = ''; //Se arranca con un string vacio
   todos.forEach((todo, index) => { //La idea es que con cada iteracion se agregue ese string al string principal
     listString += `
-        <li data-id="${index}">
-            <input type="checkbox"
+        <li data-id="${index}"${todo.complete ? ' class="todos-complete"' : ""}>
+            <input type="checkbox"${todo.complete ? ' checked' : ""}>
             <span>${todo.label}</span>
             <button type="button"></button>
         </li>
@@ -73,10 +73,31 @@ const addTodo = (e) => {
 
 //Update todo
 
+const updateTodo = ({target}) => {
+  //Obtenemos el data-id atributo
+  const id = parseInt(target.parentNode.dataset.id);
+  //Asignar valor booleano al complete
+  const complete = target.checked;
+
+  state = state.map((todo, index) => {
+    if (index === id) {
+      return {
+        ...todo,
+        complete,
+      };
+    }
+    return todo;
+  });
+
+  console.log(state);
+  renderTodos(state);
+}
+
 //?ENTRY POINT - PUNTO DE ENTRADA A LA APP ---- INICIALIZADOR
 
 function init() {
   form.addEventListener('submit', addTodo);
+  list.addEventListener("change", updateTodo);
 }
 
 //RUN THE APPPPPPPP!!!!!!!!! BE NUCBER!!!!
