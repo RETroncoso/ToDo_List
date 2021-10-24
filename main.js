@@ -91,13 +91,26 @@ const updateTodo = ({target}) => {
 
   console.log(state);
   renderTodos(state);
-}
+};
+
+const deleteTodo = ({target}) => {
+  if (target.nodeName.toLowerCase() !== "button") {
+    return;
+  }
+  const id = parseInt(target.parentNode.dataset.id);
+  const label = target.previousElementSibling.innerText;
+  if (window.confirm(`Estas a punto de borrar ${label}, ok???`)) {
+    state = state.filter((todo, index) => index !== id); //Devolveme todo index que no sea igual al id
+    renderTodos(state);
+  }
+};
 
 //?ENTRY POINT - PUNTO DE ENTRADA A LA APP ---- INICIALIZADOR
 
 function init() {
   form.addEventListener('submit', addTodo);
   list.addEventListener("change", updateTodo);
+  list.addEventListener('click', deleteTodo);
 }
 
 //RUN THE APPPPPPPP!!!!!!!!! BE NUCBER!!!!
