@@ -23,6 +23,7 @@ app.innerHTML = `
 const root = document.querySelector('.todos');
 const list = root.querySelector('.todos-list');
 const count = root.querySelector('.todos-count');
+const clear = root.querySelector('.todos-clear');
 const form = document.forms.todos;
 const input = form.elements.todo;
 
@@ -41,11 +42,12 @@ const renderTodos = (todos) => {
       `;
   });
   list.innerHTML = listString; //Le decimos a la lista que su innerHTML va a ser listString
+  clear.style.display = todos.filter((todo) => todo.complete).length ? "block" : "none";
 };
 
-//?HANDLERS
+//?HANDLERS LOGIC
 
-//Add To do
+//Add ToDo
 const addTodo = (e) => {
   e.preventDefault(); //Como el evento es submit, prevenimos la recarga
   const label = input.value.trim(); //Le pasamos un trim (sacamos espacios en blanco al principio y al final)
@@ -105,12 +107,24 @@ const deleteTodo = ({target}) => {
   }
 };
 
+const clearCompletes = () => {
+  const todoCompletes = state.filter((todo) => todo.complete).length; //Tiene un return implicito. Me devuelve un array con todos los valores del state con complete true. A ese array, le hacemos un length
+  if (todoCompletes === 0) {
+    return;
+  }
+  if (window.confirm(`Borramos los ${todoCompletes} ToDos???`)) {
+    state = state.filter ((todo) => !todo.complete);
+    renderTodos(state);
+  }
+};
+
 //?ENTRY POINT - PUNTO DE ENTRADA A LA APP ---- INICIALIZADOR
 
 function init() {
   form.addEventListener('submit', addTodo);
   list.addEventListener("change", updateTodo);
   list.addEventListener('click', deleteTodo);
+  clear.addEventListener('click', clearCompletes);
 }
 
 //RUN THE APPPPPPPP!!!!!!!!! BE NUCBER!!!!
