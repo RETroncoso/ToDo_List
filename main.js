@@ -18,6 +18,10 @@ app.innerHTML = `
     </div>
 `;
 
+const saveInLocalStorage = (todos) => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
 //?Selectores
 
 const root = document.querySelector('.todos');
@@ -27,7 +31,7 @@ const clear = root.querySelector('.todos-clear');
 const form = document.forms.todos;
 const input = form.elements.todo;
 
-let state = [];
+let state = JSON.parse(localStorage.getItem("todos")) || [];
 
 //?HANDLERS VIEW
 const renderTodos = (todos) => {
@@ -43,6 +47,7 @@ const renderTodos = (todos) => {
   });
   list.innerHTML = listString; //Le decimos a la lista que su innerHTML va a ser listString
   clear.style.display = todos.filter((todo) => todo.complete).length ? "block" : "none";
+  count.innerText = todos.filter((todo) => !todo.complete).length;
 };
 
 //?HANDLERS LOGIC
@@ -70,6 +75,7 @@ const addTodo = (e) => {
 
   //RENDERIZADO DE LOS TODOS
   renderTodos(state); //Renderizamos el Todo pasandole el state a la funcion renderTodos
+  saveInLocalStorage(state);
   input.value = ''; // Limpiamos el input
 };
 
@@ -93,6 +99,7 @@ const updateTodo = ({target}) => {
 
   console.log(state);
   renderTodos(state);
+  saveInLocalStorage(state);
 };
 
 const deleteTodo = ({target}) => {
@@ -104,6 +111,7 @@ const deleteTodo = ({target}) => {
   if (window.confirm(`Estas a punto de borrar ${label}, ok???`)) {
     state = state.filter((todo, index) => index !== id); //Devolveme todo index que no sea igual al id
     renderTodos(state);
+    saveInLocalStorage(state);
   }
 };
 
@@ -115,12 +123,14 @@ const clearCompletes = () => {
   if (window.confirm(`Borramos los ${todoCompletes} ToDos???`)) {
     state = state.filter ((todo) => !todo.complete);
     renderTodos(state);
+    saveInLocalStorage(state);
   }
 };
 
 //?ENTRY POINT - PUNTO DE ENTRADA A LA APP ---- INICIALIZADOR
 
 function init() {
+  renderTodos(state);
   form.addEventListener('submit', addTodo);
   list.addEventListener("change", updateTodo);
   list.addEventListener('click', deleteTodo);
